@@ -1,5 +1,6 @@
 # Ignore the training data files
 behavioral-cloning-data/
+output-videos/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

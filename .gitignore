@@ -1,3 +1,6 @@
+# Ignore the training data files
+behavioral-cloning-data/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

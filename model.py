@@ -10,8 +10,9 @@ from sklearn.utils import shuffle
 from keras.models import Sequential
 from keras.layers import Flatten, Dense, Lambda, Cropping2D, Conv2D, Dropout
 
-# identify the directory where the files live in this workspace
-log_dir = '/opt/behavioral-cloning-data/track-1/'
+# set up some variables
+LOG_DIR = '/opt/behavioral-cloning-data/all-data/'
+BATCH_SIZE = 32
 
 # define a generator for the model
 def generator(logs, batch_size=32):
@@ -25,9 +26,9 @@ def generator(logs, batch_size=32):
             images, angle_measurements = [], []
             for log in batch_logs:
                 # reformat the paths so that the filenames are accurate for this workspace
-                center_path = log_dir+'IMG/'+log[0].split('/')[-1]
-                left_path = log_dir+'IMG/'+log[1].split('/')[-1]
-                right_path = log_dir+'IMG/'+log[2].split('/')[-1]
+                center_path = LOG_DIR+'IMG/'+log[0].split('/')[-1]
+                left_path = LOG_DIR+'IMG/'+log[1].split('/')[-1]
+                right_path = LOG_DIR+'IMG/'+log[2].split('/')[-1]
                 # capture the images and steering angles for each of the three cameras
                 center_image, left_image, right_image = ndimage.imread(center_path), ndimage.imread(left_path), ndimage.imread(right_path)
                 center_angle = float(log[3])
@@ -45,7 +46,7 @@ def generator(logs, batch_size=32):
 
 # read driving logs to an array I can access
 driving_logs = []
-with open(log_dir+'driving_log.csv') as driving_log_file:
+with open(LOG_DIR+'driving_log.csv') as driving_log_file:
     reader = csv.reader(driving_log_file)
     for line in reader:
         driving_logs.append(line)
@@ -54,9 +55,8 @@ with open(log_dir+'driving_log.csv') as driving_log_file:
 train_logs, validation_logs = train_test_split(driving_logs, test_size=0.2)
 
 # set up the data via generator functions
-batch_size = 32
-train_generator = generator(train_logs, batch_size=batch_size)
-validation_generator = generator(validation_logs, batch_size=batch_size)
+train_generator = generator(train_logs, batch_size=BATCH_SIZE)
+validation_generator = generator(validation_logs, batch_size=BATCH_SIZE)
 
 # create the model
 model = Sequential()
@@ -82,10 +82,10 @@ model.add(Dense(1))
 # configure the model
 model.compile(loss='mse', optimizer='adam')
 model.fit_generator(train_generator, 
-          steps_per_epoch=np.ceil(len(train_logs)/batch_size),
+          steps_per_epoch=np.ceil(len(train_logs)/BATCH_SIZE),
           validation_data=validation_generator,
-          validation_steps=np.ceil(len(validation_logs)/batch_size),
+          validation_steps=np.ceil(len(validation_logs)/BATCH_SIZE),
           epochs=5, verbose=1)
 
 # save the model
-model.save('model.h5')
+model.save('model-all-data.h5')

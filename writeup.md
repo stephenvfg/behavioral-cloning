@@ -61,8 +61,6 @@ The data that I gatehered for this model was split into two separated groups of 
 ![Example of the same center cam view, reversed](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/center-cam-reversed.jpg)
 
 
-
-
 #### 3. Model parameter tuning
 
 The model used an adam optimizer, so the learning rate was not tuned manually (model.py line 25).
@@ -97,31 +95,19 @@ The final model architecture (model.py lines 18-24) consisted of a convolution n
 
 Here is a visualization of the architecture (note: visualizing the architecture is optional according to the project rubric)
 
-![alt text][image1]
-
 #### 3. Creation of the Training Set & Training Process
 
 To capture good driving behavior, I first recorded two laps on track one using center lane driving. Here is an example image of center lane driving:
 
-![alt text][image2]
-
 I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to .... These images show what a recovery looks like starting from ... :
-
-![alt text][image3]
-![alt text][image4]
-![alt text][image5]
 
 Then I repeated this process on track two in order to get more data points.
 
 To augment the data sat, I also flipped images and angles thinking that this would ... For example, here is an image that has then been flipped:
 
-![alt text][image6]
-![alt text][image7]
-
 Etc ....
 
 After the collection process, I had X number of data points. I then preprocessed this data by ...
-
 
 I finally randomly shuffled the data set and put Y% of the data into a validation set. 
 

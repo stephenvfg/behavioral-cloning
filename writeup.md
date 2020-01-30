@@ -1,5 +1,5 @@
 # **Behavioral Cloning** 
----
+
 **Behavioral Cloning Project**
 
 The goals / steps of this project are the following:
@@ -8,22 +8,19 @@ The goals / steps of this project are the following:
 * Train and validate the model with a training and validation set
 * Test that the model successfully drives around track one without leaving the road
 * Summarize the results with a written report
-
-## Rubric Points
-### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
-
 ---
 ### Files Submitted & Code Quality
 
 #### 1. Submission includes all required files and can be used to run the simulator in autonomous mode
 
 My project includes the following files:
-* model.py containing the script to create and train the model
-* drive.py for driving the car in autonomous mode
-* model.h5 containing a trained convolution neural network 
-* writeup_report.md or writeup_report.pdf summarizing the results
+* [model.py](https://github.com/stephenvfg/behavioral-cloning/blob/master/model.py) containing the script to create and train the model
+* [drive.py](https://github.com/stephenvfg/behavioral-cloning/blob/master/drive.py) for driving the car in autonomous mode
+* [model.h5](https://github.com/stephenvfg/behavioral-cloning/blob/master/model.h5) containing a trained convolution neural network 
+* [writeup.md](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup.md) summarizing the results - this document!
 
 #### 2. Submission includes functional code
+
 Using the Udacity provided simulator and my drive.py file, the car can be driven autonomously around the track by executing 
 ```sh
 python drive.py model.h5
@@ -31,21 +28,40 @@ python drive.py model.h5
 
 #### 3. Submission code is usable and readable
 
-The model.py file contains the code for training and saving the convolution neural network. The file shows the pipeline I used for training and validating the model, and it contains comments to explain how the code works.
+The [model.py](https://github.com/stephenvfg/behavioral-cloning/blob/master/model.py) file contains the code for training and saving the convolution neural network. The file shows the pipeline I used for training and validating the model, and it contains comments to explain how the code works.
 
 ### Model Architecture and Training Strategy
 
 #### 1. An appropriate model architecture has been employed
 
-My model consists of a convolution neural network with 3x3 filter sizes and depths between 32 and 128 (model.py lines 18-24) 
+I chose to to build my model based on the [NVIDIA deep learning model](https://devblogs.nvidia.com/deep-learning-self-driving-cars/) that was developed specifically for self-driving cars. Simply put, I trusted their team of researchers to develop a powerful model and architecture to solve this challenge better than I could.
 
-The model includes RELU layers to introduce nonlinearity (code line 20), and the data is normalized in the model using a Keras lambda layer (code line 18). 
+The model consists of a convolutional neural network with 3x3 and 5x5 filter sizes all with RELU activations (model.py lines 70-80).
+
+There is a Lambda pre-processing layer to normalize the data followed by a 2D cropping layer to remove unhelpful pixel data from the input images (model.py lines 65-66).
 
 #### 2. Attempts to reduce overfitting in the model
 
-The model contains dropout layers in order to reduce overfitting (model.py lines 21). 
+The data that I gatehered for this model was split into two separated groups of training data and validation data (model.py lines 54-59). The model also contains a 25% dropout layer (model.py line 75) in order to reduce overfitting.
 
-The model was trained and validated on different data sets to ensure that the model was not overfitting (code line 10-16). The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
+
+
+
+![Example of center driving on Track 1](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/track-1-middle-example.gif)
+
+![Example of recovery driving on Track 1](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/track-1-recovery-example.gif)
+
+![Example of center driving on Track 2](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/track-2-middle-example.gif)
+
+
+![Model architecture](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/model.png)
+
+![Example of view from the center cam](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/center-cam-normal.jpg)
+
+![Example of the same center cam view, reversed](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/center-cam-reversed.jpg)
+
+
+
 
 #### 3. Model parameter tuning
 
@@ -110,3 +126,8 @@ After the collection process, I had X number of data points. I then preprocessed
 I finally randomly shuffled the data set and put Y% of the data into a validation set. 
 
 I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was Z as evidenced by ... I used an adam optimizer so that manually training the learning rate wasn't necessary.
+
+
+
+
+

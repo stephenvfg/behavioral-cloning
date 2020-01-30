@@ -42,9 +42,23 @@ There is a Lambda pre-processing layer to normalize the data followed by a 2D cr
 
 #### 2. Attempts to reduce overfitting in the model
 
-The data that I gatehered for this model was split into two separated groups of training data and validation data (model.py lines 54-59). The model also contains a 25% dropout layer (model.py line 75) in order to reduce overfitting.
+The data that I gathered for this model was split into two separated groups of training data and validation data (model.py lines 54-59). The model also contains a 25% dropout layer (model.py line 75) in order to reduce overfitting.
 
+#### 3. Model parameter tuning
 
+The model uses the mean squared error loss function with an Adam optimizer (model.py line 83). I did not manually tune the learning rate. 
+
+I used 5 epochs for the model training since the improvement per epoch tapered off around the fourth or fifth epoch. Using a small batch size of 32 also helped with my model accuracy.
+
+#### 4. Appropriate training data
+
+The focus of my training data is to keep the vehicle in the center of the road. In situations where the vehicle veers close to the edge of the road I want it to understand how to react and recover. Since there are two different tracks for the vehicle to drive on, I eventually used data from both tracks.
+
+After collecting training data I put together some additional functions to augment and preprocess the data prior to training. To ensure that the vehicle is properly equipped to react from its left side as well as its right side, I horizontally flipped all of my training images and multiplied the corresponding steering angles by -1 (model.py lines 39-41). This simulated more driving data as if the vehicle were performing the same correct turns in the opposite direction.
+
+For preprocessing, I normalized the training data by centering it around 0 between -0.5 and 0.5 (model.py line 65). I also cropped out unhelpful pixels from the bottom and top of the images (model.py line 66).
+
+Finally I made sure to include data from all three vehicle cameras. To correct for the steering angles I either added or subtracted a 0.4 angle correction constant from the center steering angle for the left and right cameras respectively (model.py line 35).
 
 
 ![Example of center driving on Track 1](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/track-1-middle-example.gif)
@@ -61,15 +75,6 @@ The data that I gatehered for this model was split into two separated groups of 
 ![Example of the same center cam view, reversed](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/center-cam-reversed.jpg)
 
 
-#### 3. Model parameter tuning
-
-The model used an adam optimizer, so the learning rate was not tuned manually (model.py line 25).
-
-#### 4. Appropriate training data
-
-Training data was chosen to keep the vehicle driving on the road. I used a combination of center lane driving, recovering from the left and right sides of the road ... 
-
-For details about how I created the training data, see the next section. 
 
 ### Model Architecture and Training Strategy
 

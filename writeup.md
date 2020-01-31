@@ -110,6 +110,22 @@ As a result, my vehicle was able to get on the road and drive on track two! Howe
 
 The final model architecture (model.py lines 61-80) consisted of a convolution neural network with the following layers and layer sizes:
 
+| Layer | Details |
+| ------------------- | ------------------- |
+| Input | Input shape of 160x320 with depth of 3 |
+| Normalization | Centered around 0 between -0.5 and 0.5 |
+| Cropping | Crop out top 70 and bottom 25 pixels |
+| Convolutional | Depth of 24, 2×2 stride, 5×5 kernel, ReLu activation |
+| Convolutional | Depth of 36, 2×2 stride, 5×5 kernel, ReLu activation |
+| Convolutional | Depth of 48, 2×2 stride, 5×5 kernel, ReLu activation |
+| Convolutional | Depth of 64, non-strided, 3×3 kernel, ReLu activation |
+| Convolutional | Depth of 64, non-strided, 3×3 kernel, ReLu activation |
+| Dropout | 25% dropout rate |
+| Flatten | Size of 1164 |
+| Fully Connected | Size of 100 |
+| Fully Connected | Size of 50 |
+| Fully Connected | Size of 10 |
+| Output | Value representing the steering angle |
 
 Here is a visualization of the architecture:
 

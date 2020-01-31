@@ -60,6 +60,7 @@ After collecting training data I put together some additional functions to augme
 
 | Center camera view  | Same camera view, reversed |
 | ------------------- | -------------------------- |
+| (Steering angle) | (Steering angle) * -1.0 |
 | ![Example of view from the center cam](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/center-cam-normal.jpg) | ![Example of the same center cam view, reversed](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/center-cam-reversed.jpg) |
 
 For preprocessing, I normalized the training data by centering it around 0 between -0.5 and 0.5 (model.py line 65). I also cropped out unhelpful pixels from the bottom and top of the images (model.py line 66).
@@ -79,15 +80,18 @@ From there I followed the standard approach of splitting my data into training a
 
 To prevent overfitting, I modified the NVIDIA model by adding in one additional 25% dropout layer between the convolutional layers and the fully connected layers (model.py line 75). With this addition my training loss and validation became more consistent. My fifth training epoch produced a training loss value of 0.0717 and validation loss MSE value of 0.0692.
 
-Testing my model using center lane driving data and recovery driving data from track one enabled the autonomous vehicle to successfully drive around track one.
+I initially trained my model using center lane driving data and recovery driving data from track one.
 
 | Track one center lane driving | Track one recovery driving |
 | ------------------- | -------------------------- |
 | ![Example of center driving on Track 1](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/track-1-middle-example.gif) | ![Example of recovery driving on Track 1](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/track-1-recovery-example.gif) |
 
-| Successful vehicle driving on track one | Full footage from video output |
-| ------------------- | -------------------------- |
-| ![Successful vehicle driving on track one](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/track1-success.gif) | [Full video footage](https://github.com/stephenvfg/behavioral-cloning/blob/master/video.mp4) |
+This enabled the autonomous vehicle to successfully drive around track one when the model was applied.
+
+| Successful vehicle driving on track one |
+| ------------------- |
+| [Full footage from video output](https://github.com/stephenvfg/behavioral-cloning/blob/master/video.mp4) |
+| ![Successful vehicle driving on track one](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/track1-success.gif) |
 
 However this was not enough for the car to drive on track two. My vehicle immediately crashed on track two with just that data. To remediate I also took center lane driving footage and recovery footage from track two.
 
@@ -97,9 +101,10 @@ However this was not enough for the car to drive on track two. My vehicle immedi
 
 As a result, my vehicle was able to get on the road and drive on track two! However it was not able to complete the entire track. It crashed during a sharp corner after recovering from a curve too sharply. In order to improve my model, my next approach would be to take additional training data from track two with an increased focus on double recovering from sharp curves and corners. I might also focus on collecting data from areas with the metal poles on track two - it's possible I didn't have enough similar data from those parts of the track.
 
-| Unsuccessful vehicle driving on track two | Full footage from video output |
-| ------------------- | -------------------------- |
-| ![Unsuccessful vehicle driving on track two](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/track2-fail.gif) | [Full video footage](https://github.com/stephenvfg/behavioral-cloning/blob/master/challenge-video.mp4) |
+| Unsuccessful vehicle driving on track two |
+| ------------------- |
+| [Full footage from video output](https://github.com/stephenvfg/behavioral-cloning/blob/master/challenge-video.mp4) |
+| ![Unsuccessful vehicle driving on track two](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/track2-fail.gif) |
 
 #### 6. Final Model Architecture
 
@@ -112,23 +117,27 @@ Here is a visualization of the architecture:
 
 #### 7. Creation of the Training Set & Training Process
 
-To capture good driving behavior, I first recorded two laps on track one using center lane driving. Here is an example image of center lane driving:
+To capture good driving behavior on both tracks, I recorded data for the following scenarios:
 
-I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to .... These images show what a recovery looks like starting from ... :
+* Full laps around track one using center lane driving.
+* Full lap around track one driving in the opposite direction.
+* Partial lap around track one with a focus on recovery driving.
+* Full lap around track two.
+* Partial lap around track two with a focus on recovery driving.
 
-Then I repeated this process on track two in order to get more data points.
+Examples from my data collection process can be found in section 5 of this writeup.
 
-To augment the data sat, I also flipped images and angles thinking that this would ... For example, here is an image that has then been flipped:
+I also augmented my data set by flipping the images to simulate driving in the opposite direction. Additionally I used data from all three cmaeras on the vehicle. Examples of this can be found in section 4 of this writeup.
 
-Etc ....
+Ultimately my dataset contained the following:
 
-After the collection process, I had X number of data points. I then preprocessed this data by ...
+* Over 12,500 unique steering angle snapshots.
+* 3 unique images from 3 different camera positions for each steering angle.
+* 1 additional simulated image and angle for every collected image/angle combination.
+* Total of over 75,000 image/steering angle pairs to train my model on.
 
-I finally randomly shuffled the data set and put Y% of the data into a validation set. 
+The training data was preprocessed by normalizing the data around 0 between -0.5 and 0.5 and then cropping the data to remove useless information at the top and bottom. Then the data was shuffled and split so that 20% of the data would be used for validation.
 
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was Z as evidenced by ... I used an adam optimizer so that manually training the learning rate wasn't necessary.
+I used an Adam optimizer so I did not need to worry about setting a learning rate for the training process. The training loss improvement tapered off after the fourth or fifth epoch so I settled on 5 epochs for my training process.
 
-
-
-
-
+All of this let to a sucessful autonomous lap around track one and an "almost there" lap around track two!

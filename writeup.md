@@ -18,6 +18,8 @@ My project includes the following files:
 * [drive.py](https://github.com/stephenvfg/behavioral-cloning/blob/master/drive.py) for driving the car in autonomous mode
 * [model.h5](https://github.com/stephenvfg/behavioral-cloning/blob/master/model.h5) containing a trained convolution neural network 
 * [writeup.md](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup.md) summarizing the results - this document!
+* [video.mp4](https://github.com/stephenvfg/behavioral-cloning/blob/master/video.mp4) which shows the vehicle successfully driving on track 1.
+* [challenge-video.mp4](https://github.com/stephenvfg/behavioral-cloning/blob/master/challenge-video.mp4) which shows the vehicle attempting and having difficulty driving on track 2.
 
 #### 2. Submission includes functional code
 
@@ -56,51 +58,59 @@ The focus of my training data is to keep the vehicle in the center of the road. 
 
 After collecting training data I put together some additional functions to augment and preprocess the data prior to training. To ensure that the vehicle is properly equipped to react from its left side as well as its right side, I horizontally flipped all of my training images and multiplied the corresponding steering angles by -1 (model.py lines 39-41). This simulated more driving data as if the vehicle were performing the same correct turns in the opposite direction.
 
+| Center camera view  | Same camera view, reversed |
+| ------------------- | -------------------------- |
+| ![Example of view from the center cam](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/center-cam-normal.jpg) | ![Example of the same center cam view, reversed](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/center-cam-reversed.jpg) |
+
 For preprocessing, I normalized the training data by centering it around 0 between -0.5 and 0.5 (model.py line 65). I also cropped out unhelpful pixels from the bottom and top of the images (model.py line 66).
 
 Finally I made sure to include data from all three vehicle cameras. To correct for the steering angles I either added or subtracted a 0.4 angle correction constant from the center steering angle for the left and right cameras respectively (model.py line 35).
 
+| Left camera  | Center camera | Right camera |
+| ------------ | ------------- | ------------ |
+| (Steering angle) + 0.4 | (Steering angle) | (Steering angle) - 0.4 |
+| ![Left camera angle](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/left.jpg) | ![Center camera angle](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/center.jpg) | ![Right camera angle](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/right.jpg) |
 
-![Example of center driving on Track 1](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/track-1-middle-example.gif)
+#### 5. Solution Design Approach
 
-![Example of recovery driving on Track 1](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/track-1-recovery-example.gif)
+My overall strategy for deriving a model architecture was to find one that already works really well, and use that! In class we learned about several successful models when it comes to image recognition (AlexNet, GoogLeNet, etc). However the model that stuck out to me the most was the [NVIDIA deep learning model](https://devblogs.nvidia.com/deep-learning-self-driving-cars/) since it was designed specifically for self-driving cars.
 
-![Example of center driving on Track 2](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/track-2-middle-example.gif)
+From there I followed the standard approach of splitting my data into training and validation data sets, preprocessing and augmenting that data, training the model and then testing its accuracy on the validation data. 
 
+To prevent overfitting, I modified the NVIDIA model by adding in one additional 25% dropout layer between the convolutional layers and the fully connected layers (model.py line 75). With this addition my training loss and validation became more consistent. My fifth training epoch produced a training loss value of 0.0717 and validation loss MSE value of 0.0692.
+
+Testing my model using center lane driving data and recovery driving data from track one enabled the autonomous vehicle to successfully drive around track one.
+
+| Track one center lane driving | Track one recovery driving |
+| ------------------- | -------------------------- |
+| ![Example of center driving on Track 1](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/track-1-middle-example.gif) | ![Example of recovery driving on Track 1](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/track-1-recovery-example.gif) |
+
+| Successful vehicle driving on track one | Full footage from video output |
+| ------------------- | -------------------------- |
+| ![Successful vehicle driving on track one](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/track1-success.gif) | [Full video footage](https://github.com/stephenvfg/behavioral-cloning/blob/master/video.mp4) |
+
+However this was not enough for the car to drive on track two. My vehicle immediately crashed on track two with just that data. To remediate I also took center lane driving footage and recovery footage from track two.
+
+| Track two driving |
+| ------------------- |
+| ![Example of center driving on Track 2](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/track-2-middle-example.gif) |
+
+As a result, my vehicle was able to get on the road and drive on track two! However it was not able to complete the entire track. It crashed during a sharp corner after recovering from a curve too sharply. In order to improve my model, my next approach would be to take additional training data from track two with an increased focus on double recovering from sharp curves and corners. I might also focus on collecting data from areas with the metal poles on track two - it's possible I didn't have enough similar data from those parts of the track.
+
+| Unsuccessful vehicle driving on track two | Full footage from video output |
+| ------------------- | -------------------------- |
+| ![Unsuccessful vehicle driving on track two](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/track2-fail.gif) | [Full video footage](https://github.com/stephenvfg/behavioral-cloning/blob/master/challenge-video.mp4) |
+
+#### 6. Final Model Architecture
+
+The final model architecture (model.py lines 61-80) consisted of a convolution neural network with the following layers and layer sizes:
+
+
+Here is a visualization of the architecture:
 
 ![Model architecture](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/model.png)
 
-![Example of view from the center cam](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/center-cam-normal.jpg)
-
-![Example of the same center cam view, reversed](https://github.com/stephenvfg/behavioral-cloning/blob/master/writeup-assets/center-cam-reversed.jpg)
-
-
-
-### Model Architecture and Training Strategy
-
-#### 1. Solution Design Approach
-
-The overall strategy for deriving a model architecture was to ...
-
-My first step was to use a convolution neural network model similar to the ... I thought this model might be appropriate because ...
-
-In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting. 
-
-To combat the overfitting, I modified the model so that ...
-
-Then I ... 
-
-The final step was to run the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track... to improve the driving behavior in these cases, I ....
-
-At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
-
-#### 2. Final Model Architecture
-
-The final model architecture (model.py lines 18-24) consisted of a convolution neural network with the following layers and layer sizes ...
-
-Here is a visualization of the architecture (note: visualizing the architecture is optional according to the project rubric)
-
-#### 3. Creation of the Training Set & Training Process
+#### 7. Creation of the Training Set & Training Process
 
 To capture good driving behavior, I first recorded two laps on track one using center lane driving. Here is an example image of center lane driving:
 
